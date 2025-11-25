@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Void and Cluster demo</title>
+    <style>
+      body {
+        gap: 8px;
+        background-color: black;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      textarea {
+        width: 500px;
+        height: 200px;
+        font-family: "Courier New", Courier, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <canvas
+        id="outputCanvas"
+        style="border: 3px solid #ff0; image-rendering: pixelated"></canvas>
+    </div>
+    <textarea id="outputKernel"></textarea>
+    <div>
+      <select id="windowFuncSelect">
+        <option value="rect" selected="true">Rect</option>
+        <option value="ramp">Ramp</option>
+        <option value="cosine">Cosine</option>
+        <option value="chebyshev" data>Chebyshev</option>
+        <option value="gaussian" data>Gaussian</option>
+      </select>
+    </div>
+    <textarea id="customKernel" placeholder="2D matrix">1</textarea>
+    <div>
+      <span>Width</span>
+      <input type="number" id="outputWidth" value="15" />
+    </div>
+    <div>
+      <span>Height</span>
+      <input type="number" id="outputHeight" value="15" />
+    </div>
+    <button onclick="generate()">Generate</button>
+    <span id="generateTime"></span>
+  </body>
+  <script src="scripts/resource/windowFunc2D.js"></script>
+
+  <script>
+    const canvas = document.getElementById("outputCanvas");
+    const ctx = canvas.getContext("2d");
+
+    document.getElementById("windowFuncSelect").addEventListener("change", function () {
+      document.getElementById("customKernel").value = $windowFunc2D.getPreset(
+        document.getElementById("windowFuncSelect").value
+      );
+
+      generate();
+    });
+
+    const generate = () => {
+      const canvasWidth = Number(document.getElementById("outputWidth").value);
+      const canvasHeight = Number(document.getElementById("outputHeight").value);
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      const result = $windowFunc2D.getWindowFunctionLUT(
+        canvasWidth,
+        canvasHeight,
+        document.getElementById("customKernel").value
+      );
+
+      const frame = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+      const imageData = frame.data;
+
+      for (let i = 0, length = result.length; i < length; i++) {
+        const v = Math.floor(result[i] * 255);
+        const idx = i << 2;
+
+        imageData[idx] = v;
+        imageData[idx + 1] = v;
+        imageData[idx + 2] = v;
+        imageData[idx + 3] = 255;
+      }
+
+      ctx.putImageData(frame, 0, 0);
+
+      const formatted = [];
+
+      for (let y = 0; y < canvasHeight; y++) {
+        const yOffs = y * canvasWidth;
+        if (!formatted[y]) formatted[y] = [];
+
+        for (let x = 0; x < canvasWidth; x++) {
+          formatted[y][x] = result[yOffs + x];
+        }
+      }
+
+      document.getElementById("outputKernel").value = JSON.stringify(formatted);
+    };
+  </script>
+</html>
