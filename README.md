@@ -1,2 +1,3 @@
-# equation2kernel
-Minimal tool for generating kernel from an equation
+# _**equation2kernel**_
+## Minimal tool for generating kernel from an equation
+
