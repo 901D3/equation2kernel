@@ -32,18 +32,19 @@
         <option value="rect" selected="true">Rect</option>
         <option value="ramp">Ramp</option>
         <option value="cosine">Cosine</option>
-        <option value="chebyshev" data>Chebyshev</option>
         <option value="gaussian" data>Gaussian</option>
+        <option value="chebyshev" data>Chebyshev</option>
+        <option value="manhattan" data>Manhattan</option>
       </select>
     </div>
     <textarea id="customKernel" placeholder="2D matrix">1</textarea>
     <div>
       <span>Width</span>
-      <input type="number" id="outputWidth" value="15" />
+      <input type="number" id="outputWidth" value="32" />
     </div>
     <div>
       <span>Height</span>
-      <input type="number" id="outputHeight" value="15" />
+      <input type="number" id="outputHeight" value="32" />
     </div>
     <button onclick="generate()">Generate</button>
     <span id="generateTime"></span>
@@ -69,7 +70,7 @@
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
-      const result = $windowFunc2D.getWindowFunctionLUT(
+      const result = $windowFunc2D.getWindowFunction(
         canvasWidth,
         canvasHeight,
         document.getElementById("customKernel").value
@@ -105,4 +106,3 @@
     };
   </script>
 </html>
-
