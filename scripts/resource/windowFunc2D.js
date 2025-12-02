@@ -41,6 +41,10 @@ const $windowFunc2D = (function () {
       }
     }
 
+    let sum = 0;
+    for (let i = 0; i < sqSz; i++) sum += kernel[i];
+    for (let i = 0; i < sqSz; i++) kernel[i] /= sum;
+
     return kernel;
   };
 
