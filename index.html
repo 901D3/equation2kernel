@@ -66,6 +66,7 @@
     const generate = () => {
       const canvasWidth = Number(document.getElementById("outputWidth").value);
       const canvasHeight = Number(document.getElementById("outputHeight").value);
+      const sqSz = canvasWidth * canvasHeight;
 
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
@@ -75,21 +76,6 @@
         canvasHeight,
         document.getElementById("customKernel").value
       );
-
-      const frame = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-      const imageData = frame.data;
-
-      for (let i = 0, length = result.length; i < length; i++) {
-        const v = Math.floor(result[i] * 255);
-        const idx = i << 2;
-
-        imageData[idx] = v;
-        imageData[idx + 1] = v;
-        imageData[idx + 2] = v;
-        imageData[idx + 3] = 255;
-      }
-
-      ctx.putImageData(frame, 0, 0);
 
       const formatted = [];
 
@@ -103,6 +89,26 @@
       }
 
       document.getElementById("outputKernel").value = JSON.stringify(formatted);
+
+      const frame = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+      const imageData = frame.data;
+
+      let max = 0;
+      for (let i = 0; i < sqSz; i++) {
+        if (result[i] > max) max = result[i];
+      }
+
+      for (let i = result.length - 1; i >= 0; i--) {
+        const v = Math.floor(result[i] * (255 / max));
+        const idx = i << 2;
+
+        imageData[idx] = v;
+        imageData[idx + 1] = v;
+        imageData[idx + 2] = v;
+        imageData[idx + 3] = 255;
+      }
+
+      ctx.putImageData(frame, 0, 0);
     };
   </script>
 </html>
