@@ -10,6 +10,8 @@ const $windowFunc2D = (function () {
         "Math.exp(-Math.max(Math.abs(x - width / 2), Math.abs(y - height / 2)) / (2 * 1.5 ** 2))",
       manhattan:
         "Math.exp(-(Math.abs(x - width / 2) + Math.abs(y - height / 2)) / (2 * 1.5 ** 2))",
+      cosineGaussian:
+        "Math.cos(Math.PI / 2 + Math.PI / 2 * Math.exp(-((x - width / 2) ** 2 + (y - height / 2) ** 2) / (2 * (2) ** 2))) ** 2",
     };
 
     const choosenPreset = presets[preset];
