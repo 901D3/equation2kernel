@@ -11,7 +11,7 @@ const $windowFunc2D = (function () {
       manhattan:
         "Math.exp(-(Math.abs(x - width / 2) + Math.abs(y - height / 2)) / (2 * 1.5 ** 2))",
       cosineGaussian:
-        "Math.cos(Math.PI / 2 + Math.PI / 2 * Math.exp(-((x - width / 2) ** 2 + (y - height / 2) ** 2) / (2 * (2) ** 2))) ** 2",
+        "Math.sin(Math.PI / 2 * Math.exp(-((x - width / 2) ** 2 + (y - height / 2) ** 2) / (2 * (2) ** 2))) ** 2",
     };
 
     const choosenPreset = presets[preset];
