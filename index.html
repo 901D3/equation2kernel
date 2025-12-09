@@ -36,16 +36,17 @@
         <option value="chebyshev" data>Chebyshev</option>
         <option value="manhattan" data>Manhattan</option>
         <option value="cosineGaussian" data>Cosine-Gaussian?</option>
+        <option value="tangentGaussian" data>Tangent-Gaussian?</option>
       </select>
     </div>
     <textarea id="customKernel" placeholder="2D matrix">1</textarea>
     <div>
       <span>Width</span>
-      <input type="number" id="outputWidth" value="32" />
+      <input type="number" id="outputWidth" value="31" />
     </div>
     <div>
       <span>Height</span>
-      <input type="number" id="outputHeight" value="32" />
+      <input type="number" id="outputHeight" value="31" />
     </div>
     <button onclick="generate()">Generate</button>
     <span id="generateTime"></span>
