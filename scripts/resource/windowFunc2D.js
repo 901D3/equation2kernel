@@ -2,25 +2,24 @@ const $windowFunc2D = (function () {
   const _getPreset = (preset) => {
     const presets = {
       rect: "1",
-      ramp: "(y * width + x) / (width * height)",
       cosine:
-        "Math.cos((Math.PI * (x - width / 2)) / width) * Math.cos((Math.PI * (y - height / 2)) / height)",
-      gaussian: "Math.exp(-((x - width / 2) ** 2 + (y - height / 2) ** 2) / (2 * (1.5) ** 2))",
+        "Math.cos((Math.PI * (x - (width - 1) / 2)) / width) * Math.cos((Math.PI * (y - (height - 1) / 2)) / height)",
+      gaussian:
+        "Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 1.5 ** 2))",
       chebyshev:
-        "Math.exp(-Math.max(Math.abs(x - width / 2), Math.abs(y - height / 2)) / (2 * 1.5 ** 2))",
+        "Math.exp(-Math.max(Math.abs(x - (width - 1) / 2), Math.abs(y - (height - 1) / 2)) / (2 * 1.5 ** 2))",
       manhattan:
-        "Math.exp(-(Math.abs(x - width / 2) + Math.abs(y - height / 2)) / (2 * 1.5 ** 2))",
+        "Math.exp(-(Math.abs(x - (width - 1) / 2) + Math.abs(y - (height - 1) / 2)) / (2 * 1.5 ** 2))",
       cosineGaussian:
-        "Math.sin(Math.PI / 2 * Math.exp(-((x - width / 2) ** 2 + (y - height / 2) ** 2) / (2 * (2) ** 2))) ** 2",
+        "Math.sin(Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2))) ** 2",
+      tangentGaussian:
+        "Math.tan(Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2))) ** 2",
     };
 
     const choosenPreset = presets[preset];
 
-    if (choosenPreset) {
-      return choosenPreset;
-    } else {
-      return false;
-    }
+    if (choosenPreset) return choosenPreset;
+    else return false;
   };
 
   const _getWindowFunction = (width, height, equation) => {
@@ -44,7 +43,10 @@ const $windowFunc2D = (function () {
     }
 
     let sum = 0;
-    for (let i = 0; i < sqSz; i++) sum += kernel[i];
+    for (let i = 0; i < sqSz; i++) {
+      if (Number.isFinite(kernel[i])) sum += kernel[i];
+    }
+
     for (let i = 0; i < sqSz; i++) kernel[i] /= sum;
 
     return kernel;
