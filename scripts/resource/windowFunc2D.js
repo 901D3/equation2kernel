@@ -2,18 +2,17 @@ const $windowFunc2D = (function () {
   const _getPreset = (preset) => {
     const presets = {
       rect: "1",
-      cosine:
-        "Math.cos((Math.PI * (x - (width - 1) / 2)) / width) * Math.cos((Math.PI * (y - (height - 1) / 2)) / height)",
       gaussian:
-        "Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 1.5 ** 2))",
+        "Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2))",
+      cauchy: "1 / (1 + ((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / 2 ** 2)",
       chebyshev:
         "Math.exp(-Math.max(Math.abs(x - (width - 1) / 2), Math.abs(y - (height - 1) / 2)) / (2 * 1.5 ** 2))",
       manhattan:
         "Math.exp(-(Math.abs(x - (width - 1) / 2) + Math.abs(y - (height - 1) / 2)) / (2 * 1.5 ** 2))",
       cosineGaussian:
-        "Math.sin(Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2))) ** 2",
-      tangentGaussian:
-        "Math.tan(Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2))) ** 2",
+        "Math.sin(Math.PI * Math.exp(-((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / (2 * 2 ** 2)))",
+      cosineCauchy:
+        "Math.sin(Math.PI * (1 / (1 + ((x - (width - 1) / 2) ** 2 + (y - (height - 1) / 2) ** 2) / 2 ** 2)))",
     };
 
     const choosenPreset = presets[preset];
@@ -31,20 +30,20 @@ const $windowFunc2D = (function () {
 
     const trimmed = equation.replace(/\s/g, "");
 
-    const kernel = new Float64Array(sqSz).fill(1);
+    const kernel = new Float64Array(sqSz);
     const cp = new Function("x", "y", "width", "height", "return " + trimmed);
 
+    let sum = 0;
     for (let y = 0; y < height; y++) {
       const yOffs = y * width;
 
       for (let x = 0; x < width; x++) {
-        kernel[yOffs + x] *= cp(x, y, width, height);
-      }
-    }
+        const v = cp(x, y, width, height);
+        if (v === 0) continue;
 
-    let sum = 0;
-    for (let i = 0; i < sqSz; i++) {
-      if (Number.isFinite(kernel[i])) sum += kernel[i];
+        kernel[yOffs + x] = v;
+        sum += v;
+      }
     }
 
     for (let i = 0; i < sqSz; i++) kernel[i] /= sum;
